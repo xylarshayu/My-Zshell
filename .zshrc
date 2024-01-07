@@ -233,7 +233,7 @@ function yeehaw {
   echo ""
 }
 
-function switch_and_open {
+function switch-and-open {
   local node_version=$1
   local project_path=$2
   shift 2
@@ -246,13 +246,11 @@ function switch_and_open {
 }
 
 function adcs-fe {
-  switch-node 14.19.3
-  code -n /home/xylar/work/hpixel/adcs-fe
+  switch-and-open 14.19.3 /home/xylar/work/hpixel/adcs-fe "$@"
 }
 
 function adcs-be {
-  switch-node 14.19.3
-  code -n /home/xylar/work/hpixel/adcs-be
+  switch-and-open 14.19.3 /home/xylar/work/hpixel/adcs-be "$@"
 }
 
 function adcs {
@@ -261,23 +259,19 @@ function adcs {
 }
 
 function pixel-ui {
-  switch-node 18.14.0
-  code /home/xylar/work/hpixel/Pixel-UI-Nuxt3
+  switch-and-open 18.14.0 /home/xylar/work/hpixel/Pixel-UI-Nuxt3 "$@"
 }
 
 function medipixel {
-  switch-node 18.17.1
-  code /home/xylar/work/hpixel/medipixel
+  switch-and-open 18.17.1 /home/xylar/work/hpixel/medipixel "$@"
 }
 
 function xylar-web-lab {
-  switch-node default
-  code /home/xylar/work/xylar-web-lab
+  switch-and-open default /home/xylar/work/xylar-web-lab "$@"
 }
 
 function portfolio-test {
-  switch-node 18.14.0
-  code /home/xylar/work/portfolio-test
+  switch-and-open 18.17.1 /home/xylar/work/portfolio-test "$@"
 }
 
 function extract {
