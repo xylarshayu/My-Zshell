@@ -254,8 +254,8 @@ function adcs-be {
 }
 
 function adcs {
-  adcs-fe &
-  adcs-be &
+  adcs-fe "$@" &
+  adcs-be "$@" &
 }
 
 function pixel-ui {
