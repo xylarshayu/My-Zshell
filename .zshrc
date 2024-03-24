@@ -274,6 +274,14 @@ function portfolio-test {
   switch-and-open 18.17.1 /home/xylar/work/portfolio-test "$@"
 }
 
+function hpixel {
+  switch-and-open 18.18.2 /home/xylar/work/hpixel/hungrypixel-website "$@"
+}
+
+function physiotools {
+  code -n /home/xylar/work/physiotools
+}
+
 function extract {
   if [[ -z "$1" ]]; then
     echo "Specify a file to extract"
@@ -332,6 +340,10 @@ function fix-history {
   echo "History fixed"
 
   cd "$original_path"
+}
+
+function colors {
+  for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}; done
 }
 
 alias zs="code ~/.zshrc"
