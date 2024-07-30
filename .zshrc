@@ -323,10 +323,15 @@ function home {
   cd /home/xylar
 }
 
+function chat {
+  node $HOME/aichat/index.js "$@"
+}
+
 function help {
   echo "These are the commands you've defined"
   echo "-------------------------------------"
-  grep -E '^[a-zA-Z0-9_]+:.*##' ~/.zshrc | sed -E 's/[^a-zA-Z0-9_]+://'
+  echo "TODO"
+  # grep -E '^[a-zA-Z0-9_]+:.*##' ~/.zshrc | sed -E 's/[^a-zA-Z0-9_]+://'
 }
 
 function fix-history {
@@ -346,7 +351,9 @@ function colors {
   for i in {0..255}; do print -Pn "%K{$i}  %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%6)):#3}:+$'\n'}; done
 }
 
-alias zs="code ~/.zshrc"
+alias zs="code ~/."
+alias edit="code ~/."
+alias config="code ~/."
 alias hey="hi"
 alias hello="hi"
 alias aloha="hi"

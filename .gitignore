@@ -2,3 +2,6 @@
 !.zshrc
 !.gitignore
 !LICENSE
+!aichat/
+!aichat/*
+aichat/config.json
