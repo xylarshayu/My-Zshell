@@ -112,7 +112,7 @@ export async function main(input) {
 
   
   const response = chatCompletion.choices[0]?.message?.content || "";
-  console.log(kleur.cyan(kleur.bgBlue(kleur.bold("LLM:")) + "\n" + response));
+  console.log(kleur.cyan(kleur.bgBlue(kleur.bold("LLM")) + "\n" + response));
   
   await saveChatMessage(config.currentChat, 'user', input);
   saveChatMessage(config.currentChat, 'assistant', response); // Not awaiting result not needed
