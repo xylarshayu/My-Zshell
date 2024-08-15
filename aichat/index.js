@@ -7,7 +7,12 @@ switch (command) {
     await onLoad();
     break;
   case '--new':
+  case '-n':
     await newChat();
+    if (process.argv[3]) {
+      await continueChat();
+      await main(process.argv.slice(3).join(' '));
+    }
     break;
   case '--prev':
     await previousChat();
@@ -36,6 +41,7 @@ switch (command) {
     await consoleTotalTokensUsed();
     break;
   case '--help':
+  case '-h':
     const commands = ['--load', '--new', '--prev', '--pinned', '--pin', '--list', '--set', '--current', '--help', '--tokens', '... Or just normally chatting. Please use doube-quotation marks otherwise you\'ll get annoyances in the terminal.'];
     console.log("Available commands are:");
     commands.forEach((val) => console.log(val));
