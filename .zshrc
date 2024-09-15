@@ -141,6 +141,9 @@ export PATH=$GOPATH/bin:$GOROOT/bin:/usr/:/home/xylar/.nimble/bin:/home/xylar/.l
 
 source /snap/google-cloud-cli/current/completion.zsh.inc
 
+# AWS Variables
+export DEFAULT_AMI=ami-053f2979ba3826edf
+
 # NNN File manager stuff
 
 n ()
@@ -325,6 +328,21 @@ function home {
 
 function chat {
   node $HOME/aichat/index.js "$@"
+}
+
+function aws-profile {
+  if [ -z "$1" ]; then
+    if [ -z "$AWS_PROFILE" ]; then
+      echo "No AWS profile is currently set."
+      return 1
+    else
+      echo "Current AWS_PROFILE: $AWS_PROFILE"
+      return 1
+    fi
+  fi
+  
+  export AWS_PROFILE=$1
+  echo "AWS_PROFILE is set to '$AWS_PROFILE'"
 }
 
 function help {
