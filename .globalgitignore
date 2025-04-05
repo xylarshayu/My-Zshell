@@ -1,0 +1,78 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# IDE and Editor Files
+.idea/
+.vscode/
+.cursor/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# Dependencies and Package Managers
+node_modules/
+vendor/
+.env
+.env.local
+.env.*.local
+package-lock.json
+yarn.lock
+composer.lock
+poetry.lock
+
+# Build and Compile Output
+dist/
+build/
+out/
+target/
+*.pyc
+__pycache__/
+*.class
+*.o
+*.so
+
+# Logs and Databases
+*.log
+*.sqlite
+*.sqlite3
+*.db
+
+# Testing and Coverage
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# Temporary Files
+tmp/
+temp/
+.tmp/
+*.tmp
+
+# Documentation
+docs/_build/
+site/
+
+# Compiled Binary Files
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Backup Files
+*.bak
+*.backup
+*~
+
+# Local Development
+local_settings.py
+*.local 

@@ -187,6 +187,8 @@ export NNN_USE_EDITOR=1
 
 # .zshrc utility functions start -----------------------------------------
 
+export CURSOR_BIN_PATH="/mnt/c/Users/xylar/AppData/Local/Programs/cursor/resources/app/bin/code"
+
 function switch-node {
 
   if [[ -z "$1" ]]; then
@@ -212,7 +214,25 @@ function switch-node {
 # functions start ---------------------------------------------
 
 code() {
-    /usr/bin/env code "$@" &
+  local use_cursor=false
+  local args=()
+
+  # Parse out -c flag
+  for arg in "$@"; do
+    if [[ $arg == "-c" ]]; then
+      use_cursor=true
+    else
+      args+=("$arg")
+    fi
+  done
+
+  if $use_cursor; then
+    # Launch Cursor
+    /usr/bin/env cursor "${args[@]}" &
+  else
+    # Launch VS Code (via the real 'code' on PATH)
+    /usr/bin/env code "${args[@]}" &
+  fi
 }
 
 responses=(
@@ -320,6 +340,73 @@ function gitdiff {
 
 function dirtree {
   tree -L ${1:-3}
+}
+
+function catAll {
+  local dir="${1:-.}"  # Default to current directory if no argument is given
+  local max_depth="${2:-1}"  # Default to 1 (only base level files)
+  shift 2 2>/dev/null || shift $(($# > 0 ? 1 : 0))  # Shift past the first two args if they exist
+  
+  # Default exclusions
+  local exclude_files=("package-lock.json")
+  
+  # Add any additional exclusions provided as arguments
+  if [ $# -gt 0 ]; then
+    exclude_files=("$@")
+  fi
+  
+  # Resolve the absolute path of the specified directory
+  local abs_dir=$(cd "$dir" 2>/dev/null && pwd)
+  if [ -z "$abs_dir" ]; then
+    echo "Error: Directory '$dir' does not exist or is not accessible."
+    return 1
+  fi
+  
+  # Find the git root directory (where .git is located)
+  local git_root=$(cd "$abs_dir" && git rev-parse --show-toplevel 2>/dev/null)
+  local gitignore_path=""
+  
+  if [ -n "$git_root" ] && [ -f "$git_root/.gitignore" ]; then
+    gitignore_path="$git_root/.gitignore"
+  fi
+  
+  # Build the find command with exclusions
+  local find_cmd="find \"$dir\" -maxdepth \"$max_depth\" -type f"
+  
+  # Add .gitignore exclusions if found
+  if [ -n "$gitignore_path" ]; then
+    # Create a temporary file for git check-ignore
+    local tmp_file=$(mktemp)
+    
+    # Use git check-ignore to get all excluded patterns at once
+    find "$dir" -maxdepth "$max_depth" -type f | sort > "$tmp_file"
+    local ignored_files=$(git check-ignore --stdin < "$tmp_file")
+    rm "$tmp_file"
+    
+    # Create a pattern to exclude all git-ignored files
+    if [ -n "$ignored_files" ]; then
+      local ignored_pattern=$(echo "$ignored_files" | tr '\n' '|' | sed 's/|$//')
+      find_cmd+=" | grep -Ev \"($ignored_pattern)\""
+    fi
+  fi
+  
+  # Add manual exclusions
+  for exclude in "${exclude_files[@]}"; do
+    find_cmd+=" | grep -v \"$exclude\""
+  done
+  
+  # Execute the find command and store results
+  local files=()
+  while IFS= read -r file; do
+    files+=("$file")
+  done < <(eval $find_cmd)
+  
+  # Output file contents with headers
+  for file in "${files[@]}"; do
+    echo "\n// $file\n"
+    cat "$file"
+    echo "\n"
+  done
 }
 
 function home {
@@ -507,3 +594,43 @@ export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+###-begin-pm2-completion-###
+### credits to npm for the completion file model
+#
+# Installation: pm2 completion >> ~/.bashrc  (or ~/.zshrc)
+#
+
+COMP_WORDBREAKS=${COMP_WORDBREAKS/=/}
+COMP_WORDBREAKS=${COMP_WORDBREAKS/@/}
+export COMP_WORDBREAKS
+
+if type complete &>/dev/null; then
+  _pm2_completion () {
+    local si="$IFS"
+    IFS=$'\n' COMPREPLY=($(COMP_CWORD="$COMP_CWORD" \
+                           COMP_LINE="$COMP_LINE" \
+                           COMP_POINT="$COMP_POINT" \
+                           pm2 completion -- "${COMP_WORDS[@]}" \
+                           2>/dev/null)) || return $?
+    IFS="$si"
+  }
+  complete -o default -F _pm2_completion pm2
+elif type compctl &>/dev/null; then
+  _pm2_completion () {
+    local cword line point words si
+    read -Ac words
+    read -cn cword
+    let cword-=1
+    read -l line
+    read -ln point
+    si="$IFS"
+    IFS=$'\n' reply=($(COMP_CWORD="$cword" \
+                       COMP_LINE="$line" \
+                       COMP_POINT="$point" \
+                       pm2 completion -- "${words[@]}" \
+                       2>/dev/null)) || return $?
+    IFS="$si"
+  }
+  compctl -K _pm2_completion + -f + pm2
+fi
+###-end-pm2-completion-###

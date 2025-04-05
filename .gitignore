@@ -1,4 +1,5 @@
 *
+!.globalgitignore
 !.zshrc
 !.gitignore
 !LICENSE
